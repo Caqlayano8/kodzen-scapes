@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { getSession } from "@/lib/auth";
 import { getGameSettings } from "@/app/actions/admin";
 
@@ -43,7 +44,7 @@ export default async function HomePage() {
       <main className="flex-1 flex items-center justify-center px-4">
         <div className="text-center max-w-2xl">
           {settings.logoUrl && (
-            <img src={settings.logoUrl} alt={settings.gameName} className="w-32 h-32 mx-auto mb-6 rounded-2xl" />
+            <Image src={settings.logoUrl} alt={settings.gameName} width={128} height={128} className="mx-auto mb-6 rounded-2xl" />
           )}
           <h2 className="text-5xl md:text-7xl font-bold text-white mb-4 leading-tight">
             {settings.gameName}
