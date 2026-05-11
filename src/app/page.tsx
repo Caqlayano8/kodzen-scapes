@@ -1,5 +1,4 @@
 import Link from "next/link";
-import Image from "next/image";
 import { getSession } from "@/lib/auth";
 import { getGameSettings } from "@/app/actions/admin";
 
@@ -8,105 +7,181 @@ export default async function HomePage() {
   const settings = await getGameSettings();
 
   return (
-    <div className="min-h-screen game-gradient flex flex-col">
-      {/* Header */}
-      <header className="p-4 flex justify-between items-center">
-        <h1 className="text-2xl font-bold text-emerald-400">{settings.gameName}</h1>
-        <div className="flex gap-3">
+    <div className="min-h-screen garden-sky relative overflow-hidden">
+      {/* Clouds */}
+      <div className="absolute top-8 left-[10%] w-32 h-12 bg-white/30 rounded-full blur-sm animate-float" />
+      <div className="absolute top-16 right-[15%] w-24 h-10 bg-white/25 rounded-full blur-sm animate-float" style={{ animationDelay: "1s" }} />
+      <div className="absolute top-6 left-[50%] w-40 h-14 bg-white/20 rounded-full blur-sm animate-float" style={{ animationDelay: "2s" }} />
+
+      {/* Top Bar */}
+      <header className="relative z-20 p-3">
+        <div className="max-w-5xl mx-auto flex justify-between items-center">
+          <div className="flex items-center gap-2">
+            <div className="w-12 h-12 rounded-xl bg-gradient-to-b from-green-500 to-green-700 border-2 border-green-900 flex items-center justify-center text-2xl shadow-lg">
+              🌳
+            </div>
+            <span className="text-xl font-black text-white drop-shadow-lg">{settings.gameName}</span>
+          </div>
+
           {session ? (
-            <>
-              <Link href="/oyun" className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-medium transition-colors">
-                Oyna
-              </Link>
-              <Link href="/profil" className="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg font-medium transition-colors">
-                Profil
+            <div className="flex items-center gap-3">
+              {/* Stars */}
+              <div className="resource-badge">
+                <div className="icon bg-gradient-to-b from-yellow-400 to-yellow-600">⭐</div>
+                <span className="text-white font-bold text-sm">0</span>
+              </div>
+              {/* Coins */}
+              <div className="resource-badge">
+                <div className="icon bg-gradient-to-b from-yellow-300 to-amber-500">💰</div>
+                <span className="text-white font-bold text-sm">100</span>
+              </div>
+              {/* Settings */}
+              <Link href="/profil" className="w-10 h-10 rounded-full bg-gradient-to-b from-gray-600 to-gray-800 border-2 border-gray-500 flex items-center justify-center text-lg shadow-lg hover:scale-110 transition-transform">
+                ⚙️
               </Link>
               {session.role === "admin" && (
-                <Link href="/admin" className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-medium transition-colors">
-                  Admin
+                <Link href="/admin" className="w-10 h-10 rounded-full bg-gradient-to-b from-purple-500 to-purple-700 border-2 border-purple-400 flex items-center justify-center text-lg shadow-lg hover:scale-110 transition-transform">
+                  👑
                 </Link>
               )}
-            </>
+            </div>
           ) : (
-            <>
-              <Link href="/giris" className="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg font-medium transition-colors">
-                Giris Yap
-              </Link>
-              <Link href="/kayit" className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-medium transition-colors">
-                Kayit Ol
-              </Link>
-            </>
+            <div className="flex gap-2">
+              <Link href="/giris" className="btn-game px-5 py-2 text-sm">Giris Yap</Link>
+              <Link href="/kayit" className="btn-gold px-5 py-2 text-sm">Kayit Ol</Link>
+            </div>
           )}
         </div>
       </header>
 
-      {/* Hero Section */}
-      <main className="flex-1 flex items-center justify-center px-4">
-        <div className="text-center max-w-2xl">
-          {settings.logoUrl && (
-            <Image src={settings.logoUrl} alt={settings.gameName} width={128} height={128} className="mx-auto mb-6 rounded-2xl" />
-          )}
-          <h2 className="text-5xl md:text-7xl font-bold text-white mb-4 leading-tight">
-            {settings.gameName}
-          </h2>
-          <p className="text-xl text-emerald-200 mb-8">
-            {settings.gameDescription}
-          </p>
-          <p className="text-lg text-gray-300 mb-12">
-            {settings.welcomeMessage}
-          </p>
+      {/* Garden Scene */}
+      <main className="relative z-10 flex flex-col items-center justify-center px-4 pt-4 pb-8" style={{ minHeight: "calc(100vh - 80px)" }}>
+        {/* Garden Area - Isometric Feel */}
+        <div className="relative w-full max-w-2xl">
+          {/* Garden Ground */}
+          <div className="relative bg-gradient-to-b from-green-600/80 to-green-800/80 rounded-3xl p-6 border-4 border-green-900/50 shadow-2xl overflow-hidden">
+            {/* Grass texture overlay */}
+            <div className="absolute inset-0 grass-pattern opacity-30" />
+            
+            {/* Fence top */}
+            <div className="absolute top-0 left-4 right-4 garden-fence" />
 
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            {/* Garden Items */}
+            <div className="relative grid grid-cols-5 gap-3 mb-6 min-h-[200px]">
+              {/* Fountain */}
+              <div className="col-span-1 col-start-3 flex flex-col items-center justify-center">
+                <div className="text-5xl animate-float">⛲</div>
+                <div className="w-12 h-2 bg-blue-400/30 rounded-full mt-1 blur-sm" />
+              </div>
+              {/* Trees */}
+              <div className="col-start-1 row-start-1 flex items-end justify-center">
+                <div className="text-4xl">🌳</div>
+              </div>
+              <div className="col-start-5 row-start-1 flex items-end justify-center">
+                <div className="text-4xl">🌲</div>
+              </div>
+              {/* Flowers */}
+              <div className="col-start-2 row-start-2 flex items-center justify-center">
+                <div className="text-3xl">🌸</div>
+              </div>
+              <div className="col-start-4 row-start-2 flex items-center justify-center">
+                <div className="text-3xl">🌷</div>
+              </div>
+              {/* Benches */}
+              <div className="col-start-1 row-start-2 flex items-center justify-center">
+                <div className="text-2xl">🪑</div>
+              </div>
+              <div className="col-start-5 row-start-2 flex items-center justify-center">
+                <div className="text-2xl">🪑</div>
+              </div>
+              {/* Path stones */}
+              <div className="col-span-3 col-start-2 row-start-3 flex items-center justify-center gap-4">
+                <div className="w-8 h-4 bg-stone-400/40 rounded-full" />
+                <div className="w-10 h-5 bg-stone-400/50 rounded-full" />
+                <div className="w-8 h-4 bg-stone-400/40 rounded-full" />
+              </div>
+              {/* Lights */}
+              <div className="col-start-1 row-start-3 flex items-center justify-center">
+                <div className="text-2xl">💡</div>
+              </div>
+              <div className="col-start-5 row-start-3 flex items-center justify-center">
+                <div className="text-2xl">💡</div>
+              </div>
+            </div>
+
+            {/* Character + Speech Bubble */}
+            <div className="relative flex items-end gap-4 mt-2">
+              {/* Character (Austin-like) */}
+              <div className="animate-character flex-shrink-0">
+                <div className="w-20 h-20 bg-gradient-to-b from-blue-400 to-blue-600 rounded-2xl border-3 border-blue-800 shadow-xl flex items-center justify-center overflow-hidden relative">
+                  <div className="text-4xl">🧑‍🌾</div>
+                </div>
+              </div>
+
+              {/* Speech Bubble */}
+              <div className="speech-bubble flex-1 animate-slide-up">
+                <p className="font-semibold">{settings.welcomeMessage}</p>
+                <p className="text-sm text-gray-500 mt-1">Bulmaca coz, bahceni guzellestir!</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Task Card */}
+          <div className="task-card p-4 mt-4 animate-slide-up" style={{ animationDelay: "0.3s" }}>
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 bg-gradient-to-b from-orange-400 to-orange-600 rounded-xl flex items-center justify-center text-2xl border-2 border-orange-700 shadow-md">
+                📋
+              </div>
+              <div className="flex-1">
+                <h3 className="font-bold text-lg">Gorevler</h3>
+                <p className="text-sm text-amber-800">Bulmaca cozerek yildiz kazan ve bahceni yenile!</p>
+              </div>
+              <div className="flex items-center gap-1">
+                <span className="text-yellow-500 text-xl">⭐</span>
+                <span className="font-bold text-lg">0/3</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Play Button */}
+          <div className="flex justify-center mt-6">
             {session ? (
-              <Link
-                href="/oyun"
-                className="px-8 py-4 bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white rounded-xl text-xl font-bold shadow-lg shadow-emerald-500/25 transition-all hover:scale-105 animate-pulse-glow"
-              >
-                Oynamaya Basla
+              <Link href="/oyun" className="btn-game px-12 py-4 text-xl animate-pulse-glow">
+                🎮 Oyna!
               </Link>
             ) : (
-              <>
-                <Link
-                  href="/kayit"
-                  className="px-8 py-4 bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white rounded-xl text-xl font-bold shadow-lg shadow-emerald-500/25 transition-all hover:scale-105 animate-pulse-glow"
-                >
-                  Hemen Basla
+              <div className="flex flex-col items-center gap-3">
+                <Link href="/kayit" className="btn-game px-12 py-4 text-xl animate-pulse-glow">
+                  🎮 Hemen Basla!
                 </Link>
-                <Link
-                  href="/giris"
-                  className="px-8 py-4 bg-gray-800 hover:bg-gray-700 text-white rounded-xl text-xl font-bold border border-gray-600 transition-all hover:scale-105"
-                >
-                  Giris Yap
-                </Link>
-              </>
+                <p className="text-white/70 text-sm">
+                  Zaten hesabin var mi?{" "}
+                  <Link href="/giris" className="text-yellow-300 underline font-bold">Giris Yap</Link>
+                </p>
+              </div>
             )}
           </div>
 
-          {/* Features */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-16">
-            <div className="card-gradient rounded-xl p-6">
-              <div className="text-4xl mb-3">🧩</div>
-              <h3 className="text-lg font-bold text-white mb-2">60 Bolum</h3>
-              <p className="text-gray-400 text-sm">Kolay, orta ve zor seviyelerde 60 heyecanli bolum</p>
+          {/* Feature Cards */}
+          <div className="grid grid-cols-3 gap-3 mt-8">
+            <div className="game-card p-3 text-center animate-pop-in" style={{ animationDelay: "0.4s" }}>
+              <div className="text-3xl mb-2">🧩</div>
+              <h4 className="font-bold text-sm">60 Bolum</h4>
+              <p className="text-xs text-amber-700">Kolay, Orta, Zor</p>
             </div>
-            <div className="card-gradient rounded-xl p-6">
-              <div className="text-4xl mb-3">🌳</div>
-              <h3 className="text-lg font-bold text-white mb-2">Bahce Tasarla</h3>
-              <p className="text-gray-400 text-sm">Kazandigin yildizlarla bahceni guzellestir</p>
+            <div className="game-card p-3 text-center animate-pop-in" style={{ animationDelay: "0.5s" }}>
+              <div className="text-3xl mb-2">🌳</div>
+              <h4 className="font-bold text-sm">Bahce Tasarla</h4>
+              <p className="text-xs text-amber-700">Esyalar & Dekor</p>
             </div>
-            <div className="card-gradient rounded-xl p-6">
-              <div className="text-4xl mb-3">💎</div>
-              <h3 className="text-lg font-bold text-white mb-2">Kredi Kazan</h3>
-              <p className="text-gray-400 text-sm">Bolumleri tamamla, reklam izle, kredi kazan</p>
+            <div className="game-card p-3 text-center animate-pop-in" style={{ animationDelay: "0.6s" }}>
+              <div className="text-3xl mb-2">💰</div>
+              <h4 className="font-bold text-sm">Kredi Kazan</h4>
+              <p className="text-xs text-amber-700">Odul & Bonuslar</p>
             </div>
           </div>
         </div>
       </main>
-
-      {/* Footer */}
-      <footer className="p-4 text-center text-gray-500 text-sm">
-        {settings.gameName} &copy; 2024 - Tum haklari saklidir.
-      </footer>
     </div>
   );
 }

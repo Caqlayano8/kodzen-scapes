@@ -60,7 +60,6 @@ export default function GameClient({
     setGameState("watching_ad");
     setAdProgress(0);
 
-    // Simulate ad watching (5 seconds)
     const interval = setInterval(() => {
       setAdProgress(prev => {
         if (prev >= 100) {
@@ -105,51 +104,41 @@ export default function GameClient({
     setGameState("waiting");
   };
 
-  // Gate screen - requires ad/credit/wait
+  // Gate screen
   if (gameState === "gate") {
     const isForced = levelNumber >= settings.forceAdLevelStart;
 
     return (
-      <div className="min-h-screen game-gradient flex items-center justify-center px-4">
-        <div className="bg-gray-900/90 backdrop-blur-sm rounded-2xl p-8 max-w-md w-full border border-gray-700 text-center">
-          <h2 className="text-2xl font-bold text-white mb-2">Bolum {levelNumber}</h2>
-          <p className="text-gray-400 mb-6">
+      <div className="min-h-screen garden-sky flex items-center justify-center px-4">
+        <div className="game-overlay fixed inset-0" />
+        <div className="game-card p-8 max-w-md w-full text-center relative z-10 animate-pop-in">
+          <div className="text-6xl mb-4">🔒</div>
+          <h2 className="text-2xl font-black mb-2">Bolum {levelNumber}</h2>
+          <p className="text-amber-700 mb-6">
             {isForced
               ? "Bu bolumu acmak icin reklam izleyin veya kredi harcayin."
               : "Bu bolumu acmak icin asagidaki seceneklerden birini secin."}
           </p>
 
           <div className="space-y-3">
-            {/* Watch Ad */}
-            <button
-              onClick={handleWatchAd}
-              className="w-full py-3 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white rounded-xl font-bold transition-all flex items-center justify-center gap-2"
-            >
-              <span>📺</span> Reklam Izle (+{settings.adRewardCredits} Kredi)
+            <button onClick={handleWatchAd} className="btn-game w-full py-4 text-base flex items-center justify-center gap-2">
+              📺 Reklam Izle (+{settings.adRewardCredits} Kredi)
             </button>
 
-            {/* Spend Credits */}
             {credits >= creditCost && (
-              <button
-                onClick={handleSpendCredits}
-                className="w-full py-3 bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white rounded-xl font-bold transition-all flex items-center justify-center gap-2"
-              >
-                <span>💎</span> {creditCost} Kredi Harca (Mevcut: {credits})
+              <button onClick={handleSpendCredits} className="btn-gold w-full py-4 text-base flex items-center justify-center gap-2">
+                💎 {creditCost} Kredi Harca (Mevcut: {credits})
               </button>
             )}
 
-            {/* Wait option (only for optional gate) */}
             {!isForced && waitTimeMinutes > 0 && (
-              <button
-                onClick={handleWait}
-                className="w-full py-3 bg-gray-700 hover:bg-gray-600 text-white rounded-xl font-bold transition-all flex items-center justify-center gap-2"
-              >
-                <span>⏰</span> {waitTimeMinutes} Dakika Bekle
+              <button onClick={handleWait} className="w-full py-4 bg-gradient-to-b from-gray-400 to-gray-500 border-3 border-gray-600 rounded-xl text-white font-bold shadow-lg flex items-center justify-center gap-2">
+                ⏰ {waitTimeMinutes} Dakika Bekle
               </button>
             )}
           </div>
 
-          <Link href="/oyun" className="inline-block mt-6 text-gray-400 hover:text-white text-sm">
+          <Link href="/oyun" className="inline-block mt-6 text-amber-600 hover:text-amber-800 font-bold text-sm">
             ← Bolumlere Don
           </Link>
         </div>
@@ -160,22 +149,25 @@ export default function GameClient({
   // Watching ad
   if (gameState === "watching_ad") {
     return (
-      <div className="min-h-screen game-gradient flex items-center justify-center px-4">
-        <div className="bg-gray-900/90 backdrop-blur-sm rounded-2xl p-8 max-w-md w-full border border-gray-700 text-center">
-          <h2 className="text-xl font-bold text-white mb-4">Reklam Izleniyor...</h2>
-          <div className="w-full bg-gray-700 rounded-full h-4 mb-4">
+      <div className="min-h-screen garden-sky flex items-center justify-center px-4">
+        <div className="game-overlay fixed inset-0" />
+        <div className="game-card p-8 max-w-md w-full text-center relative z-10 animate-pop-in">
+          <div className="text-5xl mb-4">📺</div>
+          <h2 className="text-xl font-black mb-4">Reklam Izleniyor...</h2>
+          <div className="w-full bg-amber-200 rounded-full h-5 mb-4 border-2 border-amber-400 overflow-hidden">
             <div
-              className="bg-gradient-to-r from-blue-500 to-emerald-500 h-4 rounded-full transition-all duration-100"
+              className="bg-gradient-to-r from-green-400 to-green-600 h-full rounded-full transition-all duration-100 relative"
               style={{ width: `${adProgress}%` }}
-            />
+            >
+              <div className="absolute inset-0 bg-gradient-to-b from-white/30 to-transparent" />
+            </div>
           </div>
-          <p className="text-gray-400 text-sm">
-            {adProgress >= 100 ? `Tebrikler! +${creditsEarned || settings.adRewardCredits} kredi kazandiniz!` : "Lutfen reklamın bitmesini bekleyin..."}
+          <p className="text-amber-700 text-sm">
+            {adProgress >= 100 ? `Tebrikler! +${creditsEarned || settings.adRewardCredits} kredi kazandiniz! 🎉` : "Lutfen reklamın bitmesini bekleyin..."}
           </p>
-          {/* Placeholder for real ad content */}
-          <div className="mt-4 bg-gray-800 rounded-xl p-8 border border-gray-600">
-            <p className="text-gray-500 text-sm">Reklam Alani</p>
-            <p className="text-gray-600 text-xs mt-2">Google Ads burada gosterilecek</p>
+          <div className="mt-4 bg-amber-50 rounded-xl p-8 border-2 border-amber-200">
+            <p className="text-amber-400 text-sm">🎬 Reklam Alani</p>
+            <p className="text-amber-300 text-xs mt-2">Google Ads burada gosterilecek</p>
           </div>
         </div>
       </div>
@@ -185,35 +177,26 @@ export default function GameClient({
   // Waiting
   if (gameState === "waiting") {
     return (
-      <div className="min-h-screen game-gradient flex items-center justify-center px-4">
-        <div className="bg-gray-900/90 backdrop-blur-sm rounded-2xl p-8 max-w-md w-full border border-gray-700 text-center">
-          <h2 className="text-xl font-bold text-white mb-4">Bekleme Suresi</h2>
-          <p className="text-gray-400 mb-6">
-            {waitTimeMinutes} dakika sonra bolum acilacak.
-          </p>
-          <div className="text-4xl font-bold text-emerald-400 mb-6">⏰</div>
-          <p className="text-sm text-gray-500 mb-4">Beklemek istemiyor musunuz?</p>
+      <div className="min-h-screen garden-sky flex items-center justify-center px-4">
+        <div className="game-overlay fixed inset-0" />
+        <div className="game-card p-8 max-w-md w-full text-center relative z-10 animate-pop-in">
+          <div className="text-6xl mb-4">⏰</div>
+          <h2 className="text-xl font-black mb-4">Bekleme Suresi</h2>
+          <p className="text-amber-700 mb-6">{waitTimeMinutes} dakika sonra bolum acilacak.</p>
+          
+          <p className="text-sm text-amber-600 mb-4 font-bold">Beklemek istemiyor musunuz?</p>
           <div className="space-y-3">
-            <button
-              onClick={handleWatchAd}
-              className="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold transition-all"
-            >
+            <button onClick={handleWatchAd} className="btn-game w-full py-3 text-sm flex items-center justify-center gap-2">
               📺 Reklam Izle
             </button>
             {credits >= creditCost && (
-              <button
-                onClick={handleSpendCredits}
-                className="w-full py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-xl font-bold transition-all"
-              >
+              <button onClick={handleSpendCredits} className="btn-gold w-full py-3 text-sm flex items-center justify-center gap-2">
                 💎 {creditCost} Kredi Harca
               </button>
             )}
           </div>
-          <button
-            onClick={() => setGameState("playing")}
-            className="mt-4 text-emerald-400 hover:text-emerald-300 text-sm underline"
-          >
-            Simdiye kadar bekledim, devam et (demo)
+          <button onClick={() => setGameState("playing")} className="mt-4 text-amber-500 hover:text-amber-700 text-sm underline font-bold">
+            Simdiye kadar bekledim, devam et
           </button>
         </div>
       </div>
@@ -223,35 +206,30 @@ export default function GameClient({
   // Won
   if (gameState === "won" && result) {
     return (
-      <div className="min-h-screen game-gradient flex items-center justify-center px-4">
-        <div className="bg-gray-900/90 backdrop-blur-sm rounded-2xl p-8 max-w-md w-full border border-emerald-500/30 text-center">
-          <div className="text-6xl mb-4">🎉</div>
-          <h2 className="text-3xl font-bold text-white mb-2">Tebrikler!</h2>
-          <p className="text-emerald-300 text-lg mb-4">Bolum {levelNumber} tamamlandi!</p>
+      <div className="min-h-screen garden-sky flex items-center justify-center px-4">
+        <div className="game-overlay fixed inset-0" />
+        <div className="game-card p-8 max-w-md w-full text-center relative z-10 animate-pop-in">
+          <div className="text-7xl mb-4">🎉</div>
+          <h2 className="text-3xl font-black mb-2">Tebrikler!</h2>
+          <p className="text-amber-700 text-lg mb-4">Bolum {levelNumber} tamamlandi!</p>
 
-          <div className="flex justify-center gap-2 mb-4">
+          <div className="flex justify-center gap-3 mb-4">
             {[1, 2, 3].map(s => (
-              <span key={s} className={`text-3xl ${result.stars >= s ? "text-yellow-400" : "text-gray-600"}`}>⭐</span>
+              <span key={s} className={`text-4xl transition-all ${result.stars >= s ? "star-filled animate-pop-in" : "star-empty"}`} style={{ animationDelay: `${s * 0.2}s` }}>⭐</span>
             ))}
           </div>
 
-          <div className="bg-gray-800 rounded-xl p-4 mb-6">
-            <div className="text-gray-400 text-sm">Skor</div>
-            <div className="text-2xl font-bold text-white">{result.score.toLocaleString()}</div>
-            <div className="text-emerald-400 text-sm mt-2">+{result.stars * 5} Kredi Kazanildi</div>
+          <div className="wood-panel p-4 mb-6">
+            <div className="text-yellow-200 text-sm font-bold">SKOR</div>
+            <div className="text-3xl font-black text-white drop-shadow-lg">{result.score.toLocaleString()}</div>
+            <div className="text-yellow-300 text-sm mt-2 font-bold">+{result.stars * 5} Kredi Kazanildi 💰</div>
           </div>
 
           <div className="flex gap-3">
-            <Link
-              href="/oyun"
-              className="flex-1 py-3 bg-gray-700 hover:bg-gray-600 text-white rounded-xl font-bold transition-colors"
-            >
+            <Link href="/oyun" className="flex-1 py-3 bg-gradient-to-b from-gray-400 to-gray-500 border-3 border-gray-600 rounded-xl text-white font-bold shadow-lg text-center">
               Bolumler
             </Link>
-            <Link
-              href={`/oyun/bolum/${levelNumber + 1}`}
-              className="flex-1 py-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold transition-colors"
-            >
+            <Link href={`/oyun/bolum/${levelNumber + 1}`} className="btn-game flex-1 py-3 text-center">
               Sonraki →
             </Link>
           </div>
@@ -263,34 +241,26 @@ export default function GameClient({
   // Lost
   if (gameState === "lost") {
     return (
-      <div className="min-h-screen game-gradient flex items-center justify-center px-4">
-        <div className="bg-gray-900/90 backdrop-blur-sm rounded-2xl p-8 max-w-md w-full border border-red-500/30 text-center">
-          <div className="text-6xl mb-4">😢</div>
-          <h2 className="text-3xl font-bold text-white mb-2">Hamle Bitti!</h2>
-          <p className="text-gray-400 mb-6">Bolum {levelNumber} tamamlanamadi.</p>
+      <div className="min-h-screen garden-sky flex items-center justify-center px-4">
+        <div className="game-overlay fixed inset-0" />
+        <div className="game-card p-8 max-w-md w-full text-center relative z-10 animate-pop-in">
+          <div className="text-7xl mb-4">😢</div>
+          <h2 className="text-3xl font-black mb-2">Hamle Bitti!</h2>
+          <p className="text-amber-700 mb-6">Bolum {levelNumber} tamamlanamadi.</p>
 
-          <div className="flex gap-3">
-            <Link
-              href="/oyun"
-              className="flex-1 py-3 bg-gray-700 hover:bg-gray-600 text-white rounded-xl font-bold transition-colors"
-            >
+          <div className="flex gap-3 mb-3">
+            <Link href="/oyun" className="flex-1 py-3 bg-gradient-to-b from-gray-400 to-gray-500 border-3 border-gray-600 rounded-xl text-white font-bold shadow-lg text-center">
               Bolumler
             </Link>
             <button
-              onClick={() => {
-                setGameState("playing");
-                setResult(null);
-              }}
-              className="flex-1 py-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold transition-colors"
+              onClick={() => { setGameState("playing"); setResult(null); }}
+              className="btn-game flex-1 py-3"
             >
               Tekrar Dene
             </button>
           </div>
 
-          <button
-            onClick={handleWatchAd}
-            className="w-full mt-3 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold transition-colors"
-          >
+          <button onClick={handleWatchAd} className="btn-gold w-full py-3 text-sm flex items-center justify-center gap-2">
             📺 Reklam Izle & +5 Hamle
           </button>
         </div>
@@ -300,12 +270,15 @@ export default function GameClient({
 
   // Playing
   return (
-    <div className="min-h-screen game-gradient flex flex-col items-center justify-center px-4 py-6">
-      <div className="w-full max-w-lg">
-        <div className="flex justify-between items-center mb-4">
-          <Link href="/oyun" className="text-gray-400 hover:text-white text-sm">← Bolumler</Link>
-          <div className="flex items-center gap-2 bg-gray-800/80 px-3 py-1.5 rounded-lg">
-            <span className="text-yellow-400">💎</span>
+    <div className="min-h-screen garden-bg flex flex-col items-center justify-center px-4 py-4">
+      {/* Top bar */}
+      <div className="w-full max-w-lg mb-4">
+        <div className="flex justify-between items-center">
+          <Link href="/oyun" className="w-10 h-10 rounded-full bg-gradient-to-b from-gray-600 to-gray-800 border-2 border-gray-500 flex items-center justify-center text-lg shadow-lg hover:scale-110 transition-transform">
+            ←
+          </Link>
+          <div className="resource-badge">
+            <div className="icon bg-gradient-to-b from-yellow-300 to-amber-500">💰</div>
             <span className="text-white font-bold text-sm">{credits}</span>
           </div>
         </div>

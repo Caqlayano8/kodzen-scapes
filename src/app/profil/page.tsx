@@ -22,83 +22,87 @@ export default async function ProfilePage() {
   });
 
   return (
-    <div className="min-h-screen game-gradient">
-      <header className="p-4 flex justify-between items-center border-b border-gray-700/50">
-        <Link href="/" className="text-xl font-bold text-emerald-400">KodZen Scapes</Link>
-        <div className="flex items-center gap-3">
-          <Link href="/oyun" className="px-3 py-1.5 bg-emerald-700 hover:bg-emerald-600 text-white rounded-lg text-sm font-medium transition-colors">
-            Oyna
+    <div className="min-h-screen garden-sky relative">
+      <div className="absolute top-6 left-[8%] w-28 h-10 bg-white/25 rounded-full blur-sm animate-float" />
+      <div className="absolute top-14 right-[12%] w-32 h-11 bg-white/20 rounded-full blur-sm animate-float" style={{ animationDelay: "1.5s" }} />
+
+      <header className="relative z-20 p-3">
+        <div className="max-w-5xl mx-auto flex justify-between items-center">
+          <Link href="/" className="flex items-center gap-2">
+            <div className="w-10 h-10 rounded-lg bg-gradient-to-b from-green-500 to-green-700 border-2 border-green-900 flex items-center justify-center text-xl shadow-lg">
+              🌳
+            </div>
+            <span className="text-lg font-black text-white drop-shadow-lg">KodZen Scapes</span>
           </Link>
-          <form action={logoutAction}>
-            <button className="px-3 py-1.5 bg-red-700 hover:bg-red-600 text-white rounded-lg text-sm font-medium transition-colors">
-              Cikis
-            </button>
-          </form>
+          <div className="flex items-center gap-2">
+            <Link href="/oyun" className="btn-game px-4 py-2 text-sm">🎮 Oyna</Link>
+            <Link href="/bahce" className="w-10 h-10 rounded-full bg-gradient-to-b from-green-500 to-green-700 border-2 border-green-900 flex items-center justify-center text-lg shadow-lg hover:scale-110 transition-transform">🏡</Link>
+            <form action={logoutAction}>
+              <button className="btn-red px-4 py-2 text-sm">Cikis</button>
+            </form>
+          </div>
         </div>
       </header>
 
-      <main className="max-w-4xl mx-auto p-6">
-        <h2 className="text-2xl font-bold text-white mb-6">Profil</h2>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* User Info */}
-          <div className="bg-gray-900/80 rounded-2xl p-6 border border-gray-700">
-            <div className="flex items-center gap-4 mb-6">
-              <div className="w-16 h-16 bg-emerald-700 rounded-full flex items-center justify-center text-2xl font-bold text-white">
-                {user.name.charAt(0).toUpperCase()}
-              </div>
-              <div>
-                <h3 className="text-xl font-bold text-white">{user.name}</h3>
-                <p className="text-gray-400 text-sm">{user.email}</p>
-              </div>
+      <main className="relative z-10 max-w-4xl mx-auto px-4 pb-8 pt-4">
+        {/* Player Card */}
+        <div className="game-card p-6 mb-6 animate-pop-in">
+          <div className="flex items-center gap-4 mb-6">
+            <div className="w-20 h-20 bg-gradient-to-b from-green-500 to-green-700 rounded-2xl border-3 border-green-900 flex items-center justify-center text-4xl shadow-xl">
+              🧑‍🌾
             </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div className="bg-gray-800 rounded-xl p-4 text-center">
-                <div className="text-yellow-400 text-2xl mb-1">💎</div>
-                <div className="text-xl font-bold text-white">{user.credits}</div>
-                <div className="text-xs text-gray-400">Kredi</div>
-              </div>
-              <div className="bg-gray-800 rounded-xl p-4 text-center">
-                <div className="text-yellow-400 text-2xl mb-1">⭐</div>
-                <div className="text-xl font-bold text-white">{user.totalStars}</div>
-                <div className="text-xs text-gray-400">Toplam Yildiz</div>
-              </div>
-              <div className="bg-gray-800 rounded-xl p-4 text-center">
-                <div className="text-emerald-400 text-2xl mb-1">🎮</div>
-                <div className="text-xl font-bold text-white">{user.currentLevel - 1}</div>
-                <div className="text-xs text-gray-400">Tamamlanan</div>
-              </div>
-              <div className="bg-gray-800 rounded-xl p-4 text-center">
-                <div className="text-emerald-400 text-2xl mb-1">🌳</div>
-                <div className="text-xl font-bold text-white">{user.gardenLevel}</div>
-                <div className="text-xs text-gray-400">Bahce Seviye</div>
-              </div>
+            <div>
+              <h2 className="text-2xl font-black">{user.name}</h2>
+              <p className="text-amber-600 text-sm">{user.email}</p>
+              <p className="text-amber-500 text-xs mt-1">Bahce Seviyesi: {user.gardenLevel}</p>
             </div>
           </div>
 
-          {/* Recent Transactions */}
-          <div className="bg-gray-900/80 rounded-2xl p-6 border border-gray-700">
-            <h3 className="text-lg font-bold text-white mb-4">Son Islemler</h3>
-            <div className="space-y-3">
-              {transactions.length === 0 ? (
-                <p className="text-gray-500 text-sm">Henuz islem yok</p>
-              ) : (
-                transactions.map(t => (
-                  <div key={t.id} className="flex justify-between items-center bg-gray-800 rounded-lg p-3">
-                    <div>
-                      <div className="text-sm text-white">{t.description || t.type}</div>
-                      <div className="text-xs text-gray-500">
-                        {new Date(t.createdAt).toLocaleDateString("tr-TR")}
-                      </div>
-                    </div>
-                    <div className={`font-bold ${t.amount > 0 ? "text-emerald-400" : "text-red-400"}`}>
-                      {t.amount > 0 ? "+" : ""}{t.amount}
+          <div className="grid grid-cols-4 gap-3">
+            <div className="wood-panel p-3 text-center">
+              <div className="text-2xl mb-1">💰</div>
+              <div className="text-xl font-black text-white drop-shadow-lg">{user.credits}</div>
+              <div className="text-xs text-yellow-200 font-bold">Kredi</div>
+            </div>
+            <div className="wood-panel p-3 text-center">
+              <div className="text-2xl mb-1">⭐</div>
+              <div className="text-xl font-black text-white drop-shadow-lg">{user.totalStars}</div>
+              <div className="text-xs text-yellow-200 font-bold">Yildiz</div>
+            </div>
+            <div className="wood-panel p-3 text-center">
+              <div className="text-2xl mb-1">🧩</div>
+              <div className="text-xl font-black text-white drop-shadow-lg">{progress.length}</div>
+              <div className="text-xs text-yellow-200 font-bold">Tamamlanan</div>
+            </div>
+            <div className="wood-panel p-3 text-center">
+              <div className="text-2xl mb-1">🏡</div>
+              <div className="text-xl font-black text-white drop-shadow-lg">{user.gardenLevel}</div>
+              <div className="text-xs text-yellow-200 font-bold">Bahce</div>
+            </div>
+          </div>
+        </div>
+
+        {/* Recent Transactions */}
+        <div className="game-card p-6 animate-slide-up">
+          <h3 className="text-lg font-black mb-4 flex items-center gap-2">📋 Son Islemler</h3>
+          <div className="space-y-2">
+            {transactions.length === 0 ? (
+              <p className="text-amber-600 text-sm text-center py-4">Henuz islem yok</p>
+            ) : (
+              transactions.map(t => (
+                <div key={t.id} className="flex justify-between items-center bg-amber-50 rounded-xl p-3 border border-amber-200">
+                  <div>
+                    <div className="text-sm font-bold">{t.description || t.type}</div>
+                    <div className="text-xs text-amber-500">
+                      {new Date(t.createdAt).toLocaleDateString("tr-TR")}
                     </div>
                   </div>
-                ))
-              )}
-            </div>
+                  <div className={`font-black text-lg ${t.amount > 0 ? "text-green-600" : "text-red-500"}`}>
+                    {t.amount > 0 ? "+" : ""}{t.amount} 💰
+                  </div>
+                </div>
+              ))
+            )}
           </div>
         </div>
       </main>

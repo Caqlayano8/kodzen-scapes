@@ -17,20 +17,23 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   ];
 
   return (
-    <div className="min-h-screen bg-gray-950 flex">
+    <div className="min-h-screen bg-gradient-to-b from-amber-900 to-amber-950 flex">
       {/* Sidebar */}
-      <aside className="w-64 bg-gray-900 border-r border-gray-800 flex flex-col">
-        <div className="p-4 border-b border-gray-800">
-          <Link href="/" className="text-xl font-bold text-emerald-400">KodZen Scapes</Link>
-          <p className="text-xs text-gray-500 mt-1">Yonetim Paneli</p>
+      <aside className="w-64 flex flex-col" style={{ background: "linear-gradient(180deg, #5c3a1e 0%, #3a2010 100%)" }}>
+        <div className="p-4 border-b border-amber-800/50">
+          <Link href="/" className="flex items-center gap-2">
+            <span className="text-2xl">🌳</span>
+            <span className="text-lg font-black text-yellow-300 drop-shadow-lg">KodZen Scapes</span>
+          </Link>
+          <p className="text-xs text-amber-400 mt-1 font-bold">👑 Yonetim Paneli</p>
         </div>
 
-        <nav className="flex-1 p-4 space-y-1">
+        <nav className="flex-1 p-3 space-y-1">
           {navItems.map(item => (
             <Link
               key={item.href}
               href={item.href}
-              className="flex items-center gap-3 px-3 py-2.5 text-gray-300 hover:text-white hover:bg-gray-800 rounded-lg transition-colors text-sm"
+              className="flex items-center gap-3 px-3 py-2.5 text-amber-200 hover:text-white hover:bg-amber-800/50 rounded-xl transition-colors text-sm font-bold"
             >
               <span>{item.icon}</span>
               <span>{item.label}</span>
@@ -38,22 +41,22 @@ export default async function AdminLayout({ children }: { children: React.ReactN
           ))}
         </nav>
 
-        <div className="p-4 border-t border-gray-800">
+        <div className="p-4 border-t border-amber-800/50">
           <div className="flex items-center gap-3 mb-3">
-            <div className="w-8 h-8 bg-purple-700 rounded-full flex items-center justify-center text-sm font-bold text-white">
+            <div className="w-9 h-9 bg-gradient-to-b from-purple-500 to-purple-700 rounded-xl border-2 border-purple-400 flex items-center justify-center text-sm font-bold text-white shadow-lg">
               {session.name.charAt(0)}
             </div>
             <div>
-              <div className="text-sm text-white font-medium">{session.name}</div>
-              <div className="text-xs text-gray-500">Admin</div>
+              <div className="text-sm text-white font-bold">{session.name}</div>
+              <div className="text-xs text-amber-400">Admin</div>
             </div>
           </div>
           <div className="flex gap-2">
-            <Link href="/oyun" className="flex-1 py-1.5 bg-emerald-700 hover:bg-emerald-600 text-white rounded-lg text-xs font-medium text-center transition-colors">
+            <Link href="/oyun" className="btn-game flex-1 py-1.5 text-xs text-center">
               Oyuna Git
             </Link>
             <form action={logoutAction} className="flex-1">
-              <button className="w-full py-1.5 bg-red-700 hover:bg-red-600 text-white rounded-lg text-xs font-medium transition-colors">
+              <button className="btn-red w-full py-1.5 text-xs">
                 Cikis
               </button>
             </form>

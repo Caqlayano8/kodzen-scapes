@@ -5,28 +5,28 @@ export default async function AdminDashboard() {
   const stats = await getAdminStats();
 
   const cards = [
-    { label: "Toplam Kullanici", value: stats.totalUsers, icon: "👥", color: "bg-blue-600", href: "/admin/kullanicilar" },
-    { label: "Toplam Bolum", value: stats.totalLevels, icon: "🎮", color: "bg-emerald-600", href: "/admin/bolumler" },
-    { label: "Tamamlanan Bolum", value: stats.completedLevels, icon: "✅", color: "bg-green-600", href: "/admin/bolumler" },
-    { label: "Aktif Reklam", value: stats.activeAds, icon: "📺", color: "bg-purple-600", href: "/admin/reklamlar" },
-    { label: "Reklam Izlenme", value: stats.totalAdViews, icon: "👁️", color: "bg-orange-600", href: "/admin/reklamlar" },
-    { label: "Harcanan Kredi", value: stats.totalCreditsSpent, icon: "💎", color: "bg-pink-600", href: "/admin/krediler" },
+    { label: "Toplam Kullanici", value: stats.totalUsers, icon: "👥", href: "/admin/kullanicilar" },
+    { label: "Toplam Bolum", value: stats.totalLevels, icon: "🎮", href: "/admin/bolumler" },
+    { label: "Tamamlanan Bolum", value: stats.completedLevels, icon: "⭐", href: "/admin/bolumler" },
+    { label: "Aktif Reklam", value: stats.activeAds, icon: "📺", href: "/admin/reklamlar" },
+    { label: "Reklam Izlenme", value: stats.totalAdViews, icon: "👁️", href: "/admin/reklamlar" },
+    { label: "Harcanan Kredi", value: stats.totalCreditsSpent, icon: "💰", href: "/admin/krediler" },
   ];
 
   return (
     <div>
-      <h1 className="text-2xl font-bold text-white mb-6">Yonetim Paneli</h1>
+      <h1 className="text-2xl font-black text-yellow-300 mb-6 drop-shadow-lg">📊 Yonetim Paneli</h1>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
         {cards.map(card => (
           <Link key={card.label} href={card.href} className="block">
-            <div className="bg-gray-900 border border-gray-800 rounded-xl p-5 hover:border-gray-600 transition-colors">
+            <div className="game-card p-5 hover:scale-[1.02] transition-transform">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-gray-400 text-sm">{card.label}</p>
-                  <p className="text-3xl font-bold text-white mt-1">{card.value.toLocaleString()}</p>
+                  <p className="text-amber-600 text-sm font-bold">{card.label}</p>
+                  <p className="text-3xl font-black mt-1">{card.value.toLocaleString()}</p>
                 </div>
-                <div className={`w-12 h-12 ${card.color} rounded-xl flex items-center justify-center text-2xl`}>
+                <div className="w-14 h-14 wood-panel flex items-center justify-center text-2xl">
                   {card.icon}
                 </div>
               </div>
@@ -35,24 +35,23 @@ export default async function AdminDashboard() {
         ))}
       </div>
 
-      {/* Quick Actions */}
-      <h2 className="text-lg font-bold text-white mb-4">Hizli Islemler</h2>
+      <h2 className="text-lg font-black text-yellow-300 mb-4 drop-shadow-lg">⚡ Hizli Islemler</h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-        <Link href="/admin/kullanicilar" className="bg-gray-900 border border-gray-800 rounded-xl p-4 hover:border-emerald-500/50 transition-colors text-center">
-          <div className="text-2xl mb-2">➕</div>
-          <div className="text-sm text-white font-medium">Kredi Tanimla</div>
+        <Link href="/admin/kullanicilar" className="game-card p-4 hover:scale-105 transition-transform text-center">
+          <div className="text-3xl mb-2">➕</div>
+          <div className="text-sm font-black">Kredi Tanimla</div>
         </Link>
-        <Link href="/admin/reklamlar" className="bg-gray-900 border border-gray-800 rounded-xl p-4 hover:border-emerald-500/50 transition-colors text-center">
-          <div className="text-2xl mb-2">📺</div>
-          <div className="text-sm text-white font-medium">Reklam Ekle</div>
+        <Link href="/admin/reklamlar" className="game-card p-4 hover:scale-105 transition-transform text-center">
+          <div className="text-3xl mb-2">📺</div>
+          <div className="text-sm font-black">Reklam Ekle</div>
         </Link>
-        <Link href="/admin/bolumler" className="bg-gray-900 border border-gray-800 rounded-xl p-4 hover:border-emerald-500/50 transition-colors text-center">
-          <div className="text-2xl mb-2">🎮</div>
-          <div className="text-sm text-white font-medium">Bolum Duzenle</div>
+        <Link href="/admin/bolumler" className="game-card p-4 hover:scale-105 transition-transform text-center">
+          <div className="text-3xl mb-2">🎮</div>
+          <div className="text-sm font-black">Bolum Duzenle</div>
         </Link>
-        <Link href="/admin/ayarlar" className="bg-gray-900 border border-gray-800 rounded-xl p-4 hover:border-emerald-500/50 transition-colors text-center">
-          <div className="text-2xl mb-2">⚙️</div>
-          <div className="text-sm text-white font-medium">Ayarlar</div>
+        <Link href="/admin/ayarlar" className="game-card p-4 hover:scale-105 transition-transform text-center">
+          <div className="text-3xl mb-2">⚙️</div>
+          <div className="text-sm font-black">Ayarlar</div>
         </Link>
       </div>
     </div>
