@@ -1,0 +1,174 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String
+  email         String    @unique
+  password      String
+  avatar        String?
+  role          String    @default("user")
+  credits       Int       @default(100)
+  totalStars    Int       @default(0)
+  currentLevel  Int       @default(1)
+  gardenLevel   Int       @default(1)
+  lastEnergyUse DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  progress       UserProgress[]
+  transactions   CreditTransaction[]
+  gardenItems    UserGardenItem[]
+  adViews        AdView[]
+}
+
+model GameLevel {
+  id              String   @id @default(cuid())
+  levelNumber     Int      @unique
+  difficulty      String   @default("easy")
+  gridRows        Int      @default(8)
+  gridCols        Int      @default(8)
+  moves           Int      @default(25)
+  targetScore     Int      @default(1000)
+  gemTypes        Int      @default(5)
+  starThresholds  String   @default("1000,2000,3000")
+  hasBlockers     Boolean  @default(false)
+  blockerCount    Int      @default(0)
+  requiresAd      Boolean  @default(false)
+  requiresCredit  Boolean  @default(false)
+  waitTimeMinutes Int      @default(0)
+  creditCost      Int      @default(0)
+  isActive        Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  progress UserProgress[]
+}
+
+model UserProgress {
+  id          String    @id @default(cuid())
+  userId      String
+  levelId     String
+  completed   Boolean   @default(false)
+  stars       Int       @default(0)
+  highScore   Int       @default(0)
+  attempts    Int       @default(0)
+  unlockedAt  DateTime?
+  completedAt DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  user  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  level GameLevel @relation(fields: [levelId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, levelId])
+  @@index([userId])
+  @@index([levelId])
+}
+
+model CreditTransaction {
+  id          String   @id @default(cuid())
+  userId      String
+  amount      Int
+  type        String
+  description String?
+  createdAt   DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model GardenItem {
+  id          String  @id @default(cuid())
+  name        String
+  description String?
+  category    String
+  imageUrl    String
+  cost        Int     @default(0)
+  unlockLevel Int     @default(1)
+  isActive    Boolean @default(true)
+  createdAt   DateTime @default(now())
+
+  userItems UserGardenItem[]
+}
+
+model UserGardenItem {
+  id        String   @id @default(cuid())
+  userId    String
+  itemId    String
+  placed    Boolean  @default(false)
+  posX      Int      @default(0)
+  posY      Int      @default(0)
+  createdAt DateTime @default(now())
+
+  user User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  item GardenItem @relation(fields: [itemId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([itemId])
+}
+
+model AdConfig {
+  id             String  @id @default(cuid())
+  name           String
+  adType         String
+  provider       String  @default("google")
+  adUnitId       String?
+  customVideoUrl String?
+  customImageUrl String?
+  customLinkUrl  String?
+  rewardCredits  Int     @default(10)
+  isActive       Boolean @default(true)
+  placement      String
+  views          Int     @default(0)
+  clicks         Int     @default(0)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  adViews AdView[]
+}
+
+model AdView {
+  id        String   @id @default(cuid())
+  userId    String
+  adId      String
+  rewarded  Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  user User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  ad   AdConfig @relation(fields: [adId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([adId])
+}
+
+model GameSettings {
+  id                  String  @id @default("default")
+  gameName            String  @default("KodZen Scapes")
+  gameDescription     String  @default("Bulmaca coz, bahceni guzellestir!")
+  logoUrl             String?
+  initialCredits      Int     @default(100)
+  dailyBonusCredits   Int     @default(10)
+  adRewardCredits     Int     @default(15)
+  adGateLevelStart    Int     @default(15)
+  forceAdLevelStart   Int     @default(20)
+  waitTimeMinutes     Int     @default(120)
+  maxLives            Int     @default(5)
+  lifeRegenMinutes    Int     @default(30)
+  googleAdsClientId   String?
+  googleAdsEnabled    Boolean @default(false)
+  maintenanceMode     Boolean @default(false)
+  welcomeMessage      String  @default("Bahce macerasina hosgeldiniz!")
+  primaryColor        String  @default("#22c55e")
+  secondaryColor      String  @default("#16a34a")
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+}
