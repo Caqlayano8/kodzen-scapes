@@ -91,6 +91,7 @@ model GardenItem {
   name        String
   description String?
   category    String
+  emoji       String  @default("🌳")
   imageUrl    String
   cost        Int     @default(0)
   unlockLevel Int     @default(1)

@@ -140,20 +140,24 @@ async function main() {
 
   // Create garden items
   const gardenData = [
-    { name: "Gul Bahcesi", category: "flower", imageUrl: "/garden/rose.svg", cost: 3, unlockLevel: 1 },
-    { name: "Lale Tarlasi", category: "flower", imageUrl: "/garden/tulip.svg", cost: 5, unlockLevel: 3 },
-    { name: "Cinar Agaci", category: "tree", imageUrl: "/garden/tree.svg", cost: 8, unlockLevel: 5 },
-    { name: "Havuz", category: "fountain", imageUrl: "/garden/pool.svg", cost: 15, unlockLevel: 10 },
-    { name: "Bank", category: "bench", imageUrl: "/garden/bench.svg", cost: 4, unlockLevel: 2 },
-    { name: "Heykel", category: "statue", imageUrl: "/garden/statue.svg", cost: 20, unlockLevel: 15 },
-    { name: "Yol", category: "path", imageUrl: "/garden/path.svg", cost: 2, unlockLevel: 1 },
-    { name: "Fener", category: "light", imageUrl: "/garden/light.svg", cost: 6, unlockLevel: 7 },
-    { name: "Salincak", category: "bench", imageUrl: "/garden/swing.svg", cost: 10, unlockLevel: 8 },
-    { name: "Cicek Kemeri", category: "flower", imageUrl: "/garden/arch.svg", cost: 12, unlockLevel: 12 },
+    { name: "Gul Bahcesi", category: "flower", emoji: "🌹", imageUrl: "/garden/rose.svg", cost: 3, unlockLevel: 1 },
+    { name: "Lale Tarlasi", category: "flower", emoji: "🌷", imageUrl: "/garden/tulip.svg", cost: 5, unlockLevel: 3 },
+    { name: "Cinar Agaci", category: "tree", emoji: "🌳", imageUrl: "/garden/tree.svg", cost: 8, unlockLevel: 5 },
+    { name: "Havuz", category: "fountain", emoji: "🏊", imageUrl: "/garden/pool.svg", cost: 15, unlockLevel: 10 },
+    { name: "Bank", category: "bench", emoji: "🪑", imageUrl: "/garden/bench.svg", cost: 4, unlockLevel: 2 },
+    { name: "Heykel", category: "statue", emoji: "🗿", imageUrl: "/garden/statue.svg", cost: 20, unlockLevel: 15 },
+    { name: "Yol", category: "path", emoji: "🧱", imageUrl: "/garden/path.svg", cost: 2, unlockLevel: 1 },
+    { name: "Fener", category: "light", emoji: "💡", imageUrl: "/garden/light.svg", cost: 6, unlockLevel: 7 },
+    { name: "Salincak", category: "bench", emoji: "🎪", imageUrl: "/garden/swing.svg", cost: 10, unlockLevel: 8 },
+    { name: "Cicek Kemeri", category: "flower", emoji: "🌺", imageUrl: "/garden/arch.svg", cost: 12, unlockLevel: 12 },
   ];
   for (const item of gardenData) {
     const existing = await prisma.gardenItem.findFirst({ where: { name: item.name } });
-    if (!existing) await prisma.gardenItem.create({ data: item });
+    if (!existing) {
+      await prisma.gardenItem.create({ data: item });
+    } else {
+      await prisma.gardenItem.update({ where: { id: existing.id }, data: { emoji: item.emoji } });
+    }
   }
 
   console.log("Seed completed successfully!");

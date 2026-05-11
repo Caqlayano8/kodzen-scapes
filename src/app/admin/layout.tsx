@@ -65,7 +65,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 p-6 overflow-auto">
+      <main className="flex-1 p-6 overflow-auto" style={{ background: "linear-gradient(180deg, #4a2c14 0%, #2d1a0a 100%)" }}>
         {children}
       </main>
     </div>
