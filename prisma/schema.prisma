@@ -1,0 +1,310 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String
+  email         String    @unique
+  password      String
+  avatar        String?
+  role          String    @default("user")
+  credits       Int       @default(100)
+  totalStars    Int       @default(0)
+  currentLevel  Int       @default(1)
+  gardenLevel   Int       @default(1)
+  lastEnergyUse DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  progress       UserProgress[]
+  transactions   CreditTransaction[]
+  gardenItems    UserGardenItem[]
+  adViews        AdView[]
+  npcRelations   NPCRelationship[]
+  achievements   UserAchievement[]
+  dailyRewards   DailyReward[]
+  miniGameScores MiniGameScore[]
+  friendships    Friendship[]     @relation("UserFriends")
+  friendOf       Friendship[]     @relation("FriendOf")
+  gardenVisits   GardenVisit[]    @relation("GardenVisitor")
+  gardenVisitors GardenVisit[]    @relation("GardenOwner")
+}
+
+model GameLevel {
+  id              String   @id @default(cuid())
+  levelNumber     Int      @unique
+  difficulty      String   @default("easy")
+  gridRows        Int      @default(8)
+  gridCols        Int      @default(8)
+  moves           Int      @default(25)
+  targetScore     Int      @default(1000)
+  gemTypes        Int      @default(5)
+  starThresholds  String   @default("1000,2000,3000")
+  hasBlockers     Boolean  @default(false)
+  blockerCount    Int      @default(0)
+  requiresAd      Boolean  @default(false)
+  requiresCredit  Boolean  @default(false)
+  waitTimeMinutes Int      @default(0)
+  creditCost      Int      @default(0)
+  isActive        Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  progress UserProgress[]
+}
+
+model UserProgress {
+  id          String    @id @default(cuid())
+  userId      String
+  levelId     String
+  completed   Boolean   @default(false)
+  stars       Int       @default(0)
+  highScore   Int       @default(0)
+  attempts    Int       @default(0)
+  unlockedAt  DateTime?
+  completedAt DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  user  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  level GameLevel @relation(fields: [levelId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, levelId])
+  @@index([userId])
+  @@index([levelId])
+}
+
+model CreditTransaction {
+  id          String   @id @default(cuid())
+  userId      String
+  amount      Int
+  type        String
+  description String?
+  createdAt   DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model GardenItem {
+  id          String  @id @default(cuid())
+  name        String
+  description String?
+  category    String
+  emoji       String  @default("🌳")
+  imageUrl    String
+  cost        Int     @default(0)
+  unlockLevel Int     @default(1)
+  isActive    Boolean @default(true)
+  createdAt   DateTime @default(now())
+
+  userItems UserGardenItem[]
+}
+
+model UserGardenItem {
+  id        String   @id @default(cuid())
+  userId    String
+  itemId    String
+  placed    Boolean  @default(false)
+  posX      Int      @default(0)
+  posY      Int      @default(0)
+  createdAt DateTime @default(now())
+
+  user User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  item GardenItem @relation(fields: [itemId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([itemId])
+}
+
+model AdConfig {
+  id             String  @id @default(cuid())
+  name           String
+  adType         String
+  provider       String  @default("google")
+  adUnitId       String?
+  customVideoUrl String?
+  customImageUrl String?
+  customLinkUrl  String?
+  rewardCredits  Int     @default(10)
+  isActive       Boolean @default(true)
+  placement      String
+  views          Int     @default(0)
+  clicks         Int     @default(0)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  adViews AdView[]
+}
+
+model AdView {
+  id        String   @id @default(cuid())
+  userId    String
+  adId      String
+  rewarded  Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  user User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  ad   AdConfig @relation(fields: [adId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([adId])
+}
+
+model GameSettings {
+  id                  String  @id @default("default")
+  gameName            String  @default("KodZen Scapes")
+  gameDescription     String  @default("Bulmaca coz, bahceni guzellestir!")
+  logoUrl             String?
+  initialCredits      Int     @default(100)
+  dailyBonusCredits   Int     @default(10)
+  adRewardCredits     Int     @default(15)
+  adGateLevelStart    Int     @default(15)
+  forceAdLevelStart   Int     @default(20)
+  waitTimeMinutes     Int     @default(120)
+  maxLives            Int     @default(5)
+  lifeRegenMinutes    Int     @default(30)
+  googleAdsClientId   String?
+  googleAdsEnabled    Boolean @default(false)
+  maintenanceMode     Boolean @default(false)
+  welcomeMessage      String  @default("Bahce macerasina hosgeldiniz!")
+  primaryColor        String  @default("#22c55e")
+  secondaryColor      String  @default("#16a34a")
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+}
+
+// NPC Relationship System
+model NPCRelationship {
+  id            String   @id @default(cuid())
+  userId        String
+  npcId         String
+  npcName       String
+  relationship  Int      @default(0)
+  giftsGiven    Int      @default(0)
+  questsCompleted Int    @default(0)
+  lastInteraction DateTime?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, npcId])
+  @@index([userId])
+}
+
+// Seasonal Events
+model SeasonalEvent {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  season      String
+  startDate   DateTime
+  endDate     DateTime
+  rewardType  String   @default("credits")
+  rewardAmount Int     @default(50)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// Achievement / Badge System
+model Achievement {
+  id          String   @id @default(cuid())
+  name        String
+  description String
+  emoji       String   @default("🏆")
+  category    String   @default("general")
+  requirement Int      @default(1)
+  rewardStars Int      @default(0)
+  rewardCredits Int    @default(0)
+  createdAt   DateTime @default(now())
+
+  userAchievements UserAchievement[]
+}
+
+model UserAchievement {
+  id            String   @id @default(cuid())
+  userId        String
+  achievementId String
+  progress      Int      @default(0)
+  completed     Boolean  @default(false)
+  completedAt   DateTime?
+  createdAt     DateTime @default(now())
+
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  achievement Achievement @relation(fields: [achievementId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, achievementId])
+  @@index([userId])
+}
+
+// Daily Login / Reward System
+model DailyReward {
+  id        String   @id @default(cuid())
+  userId    String
+  day       Int
+  reward    String
+  claimed   Boolean  @default(false)
+  claimedAt DateTime?
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+// Mini Game Scores
+model MiniGameScore {
+  id        String   @id @default(cuid())
+  userId    String
+  gameType  String
+  score     Int      @default(0)
+  reward    String?
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([gameType])
+}
+
+// Friendship System
+model Friendship {
+  id         String   @id @default(cuid())
+  userId     String
+  friendId   String
+  status     String   @default("pending")
+  createdAt  DateTime @default(now())
+
+  user   User @relation("UserFriends", fields: [userId], references: [id], onDelete: Cascade)
+  friend User @relation("FriendOf", fields: [friendId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, friendId])
+  @@index([userId])
+  @@index([friendId])
+}
+
+// Garden Visit & Like
+model GardenVisit {
+  id        String   @id @default(cuid())
+  visitorId String
+  gardenOwnerId String
+  liked     Boolean  @default(false)
+  comment   String?
+  createdAt DateTime @default(now())
+
+  visitor     User @relation("GardenVisitor", fields: [visitorId], references: [id], onDelete: Cascade)
+  gardenOwner User @relation("GardenOwner", fields: [gardenOwnerId], references: [id], onDelete: Cascade)
+
+  @@index([visitorId])
+  @@index([gardenOwnerId])
+}
