@@ -180,6 +180,25 @@ export default async function HomePage() {
               <p className="text-xs text-amber-700">Odul & Bonuslar</p>
             </div>
           </div>
+
+          {/* New Features Row */}
+          <div className="grid grid-cols-3 gap-3 mt-3">
+            <div className="game-card p-3 text-center animate-pop-in" style={{ animationDelay: "0.7s" }}>
+              <div className="text-3xl mb-2">🐱</div>
+              <h4 className="font-bold text-sm">Hayvanlar</h4>
+              <p className="text-xs text-amber-700">Sev & Besle</p>
+            </div>
+            <div className="game-card p-3 text-center animate-pop-in" style={{ animationDelay: "0.8s" }}>
+              <div className="text-3xl mb-2">🎮</div>
+              <h4 className="font-bold text-sm">Mini Oyunlar</h4>
+              <p className="text-xs text-amber-700">Balik & Hazine</p>
+            </div>
+            <div className="game-card p-3 text-center animate-pop-in" style={{ animationDelay: "0.9s" }}>
+              <div className="text-3xl mb-2">🌙</div>
+              <h4 className="font-bold text-sm">Canli Dunya</h4>
+              <p className="text-xs text-amber-700">Gunduz & Gece</p>
+            </div>
+          </div>
         </div>
       </main>
     </div>

@@ -193,8 +193,134 @@ export function swapGems(grid: CellState[][], from: Position, to: Position): Cel
 }
 
 export function calculateScore(matchCount: number, combo: number): number {
-  return Math.floor(matchCount * 50 * (1 + combo * 0.5));
+  const baseScore = matchCount * 50;
+  const comboMultiplier = 1 + combo * 0.5;
+  const chainBonus = combo >= 3 ? 100 : combo >= 2 ? 50 : 0;
+  return Math.floor(baseScore * comboMultiplier + chainBonus);
 }
+
+// Booster types
+export type BoosterType = "rocket" | "bomb" | "rainbow" | "dynamite";
+
+export interface Booster {
+  type: BoosterType;
+  name: string;
+  emoji: string;
+  description: string;
+}
+
+export const BOOSTERS: Record<BoosterType, Booster> = {
+  rocket: { type: "rocket", name: "Roket", emoji: "🚀", description: "Tum satir veya sutunu temizler" },
+  bomb: { type: "bomb", name: "Bomba", emoji: "💣", description: "5x5 alani temizler" },
+  rainbow: { type: "rainbow", name: "Gokkusagi", emoji: "🌈", description: "Secilen rengin tamamini temizler" },
+  dynamite: { type: "dynamite", name: "Dinamit", emoji: "🧨", description: "Ekranin yarisini temizler" },
+};
+
+export function detectBooster(match: Match): BoosterType | null {
+  if (match.positions.length >= 5) return "rainbow";
+  if (match.positions.length === 4) return "rocket";
+
+  // L/T shape detection for bomb
+  const rows = new Set(match.positions.map(p => p.row));
+  const cols = new Set(match.positions.map(p => p.col));
+  if (rows.size >= 2 && cols.size >= 2) return "bomb";
+
+  return null;
+}
+
+export function applyBooster(grid: CellState[][], pos: Position, booster: BoosterType, gemTypes: number): { grid: CellState[][]; removedCount: number } {
+  const newGrid = grid.map(row => [...row]);
+  const rows = grid.length;
+  const cols = grid[0].length;
+  let removed = 0;
+
+  switch (booster) {
+    case "rocket": {
+      // Clear entire row
+      for (let c = 0; c < cols; c++) {
+        if (newGrid[pos.row][c] >= 0) { newGrid[pos.row][c] = -2; removed++; }
+      }
+      break;
+    }
+    case "bomb": {
+      // Clear 5x5 area
+      for (let r = pos.row - 2; r <= pos.row + 2; r++) {
+        for (let c = pos.col - 2; c <= pos.col + 2; c++) {
+          if (r >= 0 && r < rows && c >= 0 && c < cols && newGrid[r][c] >= 0) {
+            newGrid[r][c] = -2; removed++;
+          }
+        }
+      }
+      break;
+    }
+    case "rainbow": {
+      // Clear all gems of the same color
+      const targetGem = grid[pos.row][pos.col];
+      if (targetGem >= 0) {
+        for (let r = 0; r < rows; r++) {
+          for (let c = 0; c < cols; c++) {
+            if (newGrid[r][c] === targetGem) { newGrid[r][c] = -2; removed++; }
+          }
+        }
+      }
+      break;
+    }
+    case "dynamite": {
+      // Clear random half
+      const allPositions: Position[] = [];
+      for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < cols; c++) {
+          if (newGrid[r][c] >= 0) allPositions.push({ row: r, col: c });
+        }
+      }
+      const half = Math.floor(allPositions.length / 2);
+      for (let i = allPositions.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [allPositions[i], allPositions[j]] = [allPositions[j], allPositions[i]];
+      }
+      for (let i = 0; i < half; i++) {
+        newGrid[allPositions[i].row][allPositions[i].col] = -2;
+        removed++;
+      }
+      break;
+    }
+  }
+
+  return { grid: newGrid, removedCount: removed };
+}
+
+// Process chain reactions - keep finding and removing matches
+export function processChainReactions(grid: CellState[][], gemTypes: number): { grid: CellState[][]; totalRemoved: number; chainCount: number } {
+  let currentGrid = grid.map(row => [...row]);
+  let totalRemoved = 0;
+  let chainCount = 0;
+
+  while (true) {
+    const matches = findMatches(currentGrid);
+    if (matches.length === 0) break;
+
+    const { grid: afterRemove, removedCount } = removeMatches(currentGrid, matches);
+    totalRemoved += removedCount;
+    chainCount++;
+
+    currentGrid = applyGravity(afterRemove, gemTypes);
+  }
+
+  return { grid: currentGrid, totalRemoved, chainCount };
+}
+
+// Obstacle types for advanced levels
+export type ObstacleType = "ice" | "chain" | "wood" | "honey" | "rock" | "dark" | "portal";
+
+export const OBSTACLE_INFO: Record<ObstacleType, { name: string; emoji: string; hp: number; description: string }> = {
+  ice: { name: "Buz", emoji: "🧊", hp: 1, description: "Eslestirme ile kirilir" },
+  chain: { name: "Zincir", emoji: "⛓️", hp: 1, description: "Yaninda eslestirme gerekir" },
+  wood: { name: "Tahta Kutu", emoji: "📦", hp: 2, description: "2 darbe ile kirilir" },
+  honey: { name: "Bal", emoji: "🍯", hp: 1, description: "Yayilir, hizli temizlenmeli" },
+  rock: { name: "Kaya", emoji: "🪨", hp: 0, description: "Tasinamaz, etrafinda eslestirme" },
+  dark: { name: "Karanlik", emoji: "🌑", hp: 1, description: "Taslari gizler" },
+  portal: { name: "Portal", emoji: "🌀", hp: 0, description: "Taslari baska yere isinlar" },
+};
 
 export function getStars(score: number, thresholds: number[]): number {
   if (score >= thresholds[2]) return 3;

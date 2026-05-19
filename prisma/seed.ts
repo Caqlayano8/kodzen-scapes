@@ -160,6 +160,39 @@ async function main() {
     }
   }
 
+  // Create achievements
+  const achievements = [
+    { name: "Ilk Adim", description: "Ilk bulmacayi tamamla", emoji: "🎯", category: "puzzle", requirement: 1, rewardStars: 1 },
+    { name: "Bulmaca Ustasi", description: "10 bulmaca tamamla", emoji: "🧩", category: "puzzle", requirement: 10, rewardStars: 3 },
+    { name: "Yildiz Toplayici", description: "50 yildiz topla", emoji: "⭐", category: "stars", requirement: 50, rewardCredits: 50 },
+    { name: "Bahce Tasarimcisi", description: "5 esya yerlestir", emoji: "🌳", category: "garden", requirement: 5, rewardStars: 2 },
+    { name: "Balik Avcisi", description: "10 balik yakala", emoji: "🎣", category: "minigame", requirement: 10, rewardCredits: 30 },
+    { name: "Hazine Bulucu", description: "5 hazine bul", emoji: "🗺️", category: "minigame", requirement: 5, rewardCredits: 25 },
+    { name: "Sosyal Kelebek", description: "3 arkadas edin", emoji: "🦋", category: "social", requirement: 3, rewardCredits: 20 },
+    { name: "Bahce Ziyaretcisi", description: "5 bahce ziyaret et", emoji: "👀", category: "social", requirement: 5, rewardCredits: 15 },
+    { name: "NPC Dostu", description: "Bir NPC ile 50 iliski puani", emoji: "💕", category: "npc", requirement: 50, rewardStars: 5 },
+    { name: "Combo Ustasi", description: "3x combo yap", emoji: "🔥", category: "puzzle", requirement: 3, rewardCredits: 40 },
+    { name: "Mevsim Gezgini", description: "4 mevsimsel etkinlige katil", emoji: "🌍", category: "event", requirement: 4, rewardStars: 10 },
+    { name: "Koleksiyoncu", description: "Tum bahce esyalarini topla", emoji: "🏆", category: "garden", requirement: 10, rewardCredits: 100 },
+  ];
+  for (const ach of achievements) {
+    const existing = await prisma.achievement.findFirst({ where: { name: ach.name } });
+    if (!existing) await prisma.achievement.create({ data: ach });
+  }
+
+  // Create seasonal events
+  const now = new Date();
+  const seasonalEvents = [
+    { name: "Ilkbahar Cicek Festivali", description: "En guzel cicek bahcesini tasarla!", season: "spring", startDate: new Date(now.getFullYear(), 2, 1), endDate: new Date(now.getFullYear(), 4, 31), rewardType: "credits", rewardAmount: 100 },
+    { name: "Yaz Plaj Partisi", description: "Plaj temasini kesfet!", season: "summer", startDate: new Date(now.getFullYear(), 5, 1), endDate: new Date(now.getFullYear(), 7, 31), rewardType: "stars", rewardAmount: 10 },
+    { name: "Sonbahar Hasat Senligi", description: "Hasat zamanı geldi!", season: "autumn", startDate: new Date(now.getFullYear(), 8, 1), endDate: new Date(now.getFullYear(), 10, 30), rewardType: "credits", rewardAmount: 75 },
+    { name: "Kis Yilbasi Etkinligi", description: "Kar temasında bahce susleme!", season: "winter", startDate: new Date(now.getFullYear(), 11, 1), endDate: new Date(now.getFullYear() + 1, 1, 28), rewardType: "credits", rewardAmount: 150 },
+  ];
+  for (const event of seasonalEvents) {
+    const existing = await prisma.seasonalEvent.findFirst({ where: { name: event.name } });
+    if (!existing) await prisma.seasonalEvent.create({ data: event });
+  }
+
   console.log("Seed completed successfully!");
 }
 
